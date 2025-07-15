@@ -1,0 +1,1178 @@
+{
+  "name": "talkinfrench-conversations",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {}
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -1220,
+        520
+      ],
+      "id": "89b5ee10-0824-4fb8-8093-efbdeaaae2af",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "jsCode": "const allowedTypes = [\"TYPE_EMAIL\", \"TYPE_FACEBOOK\", \"TYPE_INSTAGRAM\"];\nvar items = $input.first().json.conversations;\nreturn items.filter(item => allowedTypes.includes(item.lastMessageType));\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -500,
+        100
+      ],
+      "id": "78c7a32a-d34c-4d61-b99a-5a9b34e08a28",
+      "name": "Code"
+    },
+    {
+      "parameters": {
+        "resource": "fileFolder",
+        "queryString": "={{ $json.contactName }}",
+        "limit": 100,
+        "filter": {
+          "folderId": {
+            "__rl": true,
+            "value": "1U8WxH806tGFDQjsoBNWOaSTc5aVx479P",
+            "mode": "id"
+          }
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        -160,
+        200
+      ],
+      "id": "fdb1c3ca-0d9c-4600-a319-6111817d751d",
+      "name": "Google Drive2",
+      "alwaysOutputData": true,
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "Rsfk1ogWsjMLbQQW",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "75706063-3855-44aa-89af-813bda934030",
+              "leftValue": "={{ $json }}",
+              "rightValue": "",
+              "operator": {
+                "type": "object",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        0,
+        0
+      ],
+      "id": "7cc731dc-d37c-4d6c-80e4-4d31bbfced56",
+      "name": "If1",
+      "alwaysOutputData": false
+    },
+    {
+      "parameters": {
+        "resource": "folder",
+        "name": "={{ $('Code').item.json.contactName }}",
+        "driveId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "My Drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "=1U8WxH806tGFDQjsoBNWOaSTc5aVx479P",
+          "mode": "id"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        20,
+        380
+      ],
+      "id": "89bb8ad8-3dee-4b00-857f-3e0954049424",
+      "name": "Google Drive3",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "Rsfk1ogWsjMLbQQW",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "=https://services.leadconnectorhq.com/conversations/{{ $json.id }}/messages",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "highLevelOAuth2Api",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "limit",
+              "value": "100"
+            }
+          ]
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Accept",
+              "value": "application/json"
+            },
+            {
+              "name": "Version",
+              "value": "2021-04-15"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -360,
+        560
+      ],
+      "id": "f35fdfba-b431-4497-b568-8a00d660a324",
+      "name": "HTTP Request1",
+      "credentials": {
+        "highLevelOAuth2Api": {
+          "id": "iXB9R7m6ptTsOp4R",
+          "name": "HighLevel talkinfrench"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        560,
+        220
+      ],
+      "id": "e58541c2-ce09-495e-962e-2ef74dc6cf80",
+      "name": "Wait1",
+      "webhookId": "5da22191-497d-4661-8e95-ebedba3be8f0"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "25d845a0-4d32-4f53-bd59-f8deb0843a73",
+              "name": "offset",
+              "value": 0,
+              "type": "number"
+            },
+            {
+              "id": "67ce20ea-fdac-4662-a498-480cd98254c8",
+              "name": "limit",
+              "value": 100,
+              "type": "number"
+            },
+            {
+              "id": "2bb797f2-3b74-4b80-b92e-a5e891436eed",
+              "name": "hasMore",
+              "value": true,
+              "type": "boolean"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -1000,
+        280
+      ],
+      "id": "a680888a-d26c-439c-af56-35daa3be9892",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "url": " https://services.leadconnectorhq.com/conversations/search",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "highLevelOAuth2Api",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "locationId",
+              "value": "hYbWhnSvqyEl9M8eAhVw"
+            },
+            {
+              "name": "limit",
+              "value": "=100"
+            },
+            {
+              "name": "sortBy",
+              "value": "=last_message_date"
+            }
+          ]
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Accept",
+              "value": "application/json"
+            },
+            {
+              "name": "Version",
+              "value": "2021-04-15"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -780,
+        160
+      ],
+      "id": "7dbad179-4b35-4a2b-b15f-1638c13520bc",
+      "name": "HTTP Request",
+      "credentials": {
+        "highLevelOAuth2Api": {
+          "id": "iXB9R7m6ptTsOp4R",
+          "name": "HighLevel talkinfrench"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// const date_added = $input.first().json.dateAdded;\n// const direction = $input.first().json.direction\n// const timestamp = new Date(date_added).toISOString();\n// const sender = direction === \"inbound\" ? \"Contact\" : \"User\";\n// const msg = $input.first().json.body;\n// const body = msg || \"[no message]\";\n\n// return [{\n//   json: {\n//     formatted: `[${sender}] - ${timestamp}:\\n${body}\\n`\n//   }\n// }];\nconst items = $input.all();\n\nif (!items.length) {\n  throw new Error(\"No input items received\");\n}\n\n// Get folder ID from first input (assumed to be shared across all)\n\n// Collect all formatted messages\nconst messages = [];\n\n\n  for (const m of items) {\n    const timestamp = new Date(m.json.dateAdded).toISOString();\n    const sender = m.json.direction === \"inbound\" ? \"Contact\" : \"User\";\n    const body = m.json.body || \"[no message]\";\n    const folder_id  = m.json.folder_id;\n\n    messages.push({\n      formatted: `[${sender}] - ${timestamp}:\\n${body}\\n`,\n      folder_id:folder_id\n    });\n  }\n\nreturn messages\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -420,
+        740
+      ],
+      "id": "714ac4fa-acc6-466b-9ff3-9f6b9f4432a8",
+      "name": "Code1"
+    },
+    {
+      "parameters": {
+        "jsCode": "const formatted_message = $input.all();\n\n// Try to get folder_id from Loop Over Items1, fallback to If2\nlet studentFolderId = null;\n\ntry {\n  studentFolderId = $('Loop Over Items1').first()?.json?.folder_id;\n} catch (e) {\n  studentFolderId = null;\n}\n\nif (!studentFolderId) {\n  try {\n    studentFolderId = $('If2').first()?.json?.folder_id;\n  } catch (e) {\n    studentFolderId = null;\n  }\n}\nif (!studentFolderId) {\n  try {\n    studentFolderId = $input.first().json.folder_id;\n  } catch (e) {\n    studentFolderId = null;\n  }\n}\nlet fullText = '';\nfor (const m of formatted_message) {\n  fullText += m.json.formatted + '\\n';\n}\n\nreturn [{\n  json: {\n    studentFolderId,\n    fullText\n  }\n}];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -300,
+        920
+      ],
+      "id": "09fc834a-8444-4d7e-bd41-f8883a492f07",
+      "name": "Code9"
+    },
+    {
+      "parameters": {
+        "operation": "createFromText",
+        "content": "={{ $json.fullText }}",
+        "name": "=conversation_{{ $now.format('yyyy-MM-dd_hh_mm') }}.txt",
+        "driveId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "My Drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "={{ $json.studentFolderId }}",
+          "mode": "id"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        -260,
+        1140
+      ],
+      "id": "58d91023-f3d2-48a0-8a98-055745507749",
+      "name": "Google Drive5",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "Rsfk1ogWsjMLbQQW",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        -380,
+        300
+      ],
+      "id": "5298f8d3-ca0d-47d0-a7ef-f365e982bfc7",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.1,
+      "position": [
+        -740,
+        600
+      ],
+      "id": "acad58d1-c785-4df2-9d31-649133869bfe",
+      "name": "Merge1"
+    },
+    {
+      "parameters": {
+        "jsCode": "var folder_id = $input.first().json.id;\nvar item = $('Loop Over Items').all()[0];\nitem.json.folder_id = folder_id;\nreturn item;"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        420,
+        0
+      ],
+      "id": "c821eeba-025f-4c51-abdf-2531c64fbeb5",
+      "name": "Code2"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "43977c0e-34f4-4910-8302-271447cfe247",
+              "leftValue": "={{ $json.lastMessageType }}",
+              "rightValue": "TYPE_FACEBOOK",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            },
+            {
+              "id": "deb47863-4ad1-41db-82b3-4e55449f4d36",
+              "leftValue": "={{ $json.lastMessageType }}",
+              "rightValue": "TYPE_INSTAGRAM",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "or"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -580,
+        560
+      ],
+      "id": "23db5f25-8790-4edd-a8e4-d76de385bfa5",
+      "name": "If3"
+    },
+    {
+      "parameters": {
+        "url": "=https://services.leadconnectorhq.com/conversations/{{ $json.id }}/messages",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "highLevelOAuth2Api",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "limit",
+              "value": "100"
+            }
+          ]
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Accept",
+              "value": "application/json"
+            },
+            {
+              "name": "Version",
+              "value": "2021-04-15"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -880,
+        780
+      ],
+      "id": "614b6584-1ab5-4a3b-85eb-40b2d7fe89f3",
+      "name": "HTTP Request3",
+      "credentials": {
+        "highLevelOAuth2Api": {
+          "id": "iXB9R7m6ptTsOp4R",
+          "name": "HighLevel talkinfrench"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const mergeData = $('Merge1').all();     // contains id (conversationId) and folder_id\nconst inputItems = $input.all();         // contains messages[].conversationId\n\n/** @type {{ [key: string]: string }} */\nconst folderIdMap = {};  // typed map\n\n// Build the folderId mapping using conversationId\nfor (const item of mergeData) {\n  const conversationId = item.json.id;\n  const folderId = item.json.folder_id;\n\n  if (conversationId) {\n    folderIdMap[conversationId] = folderId;\n  }\n}\n\n// Map folder_id to each item + each message in messages array\nconst output = inputItems.map(item => {\n  const messagesArray = item.json.messages?.messages || [];\n  const conversationId = messagesArray[0]?.conversationId;\n  const folderId = folderIdMap[conversationId] || null;\n\n  // Add folder_id to each message object\n  const updatedMessages = messagesArray.map(msg => ({\n    ...msg,\n    folder_id: folderId,\n  }));\n\n  return {\n    json: {\n      ...item.json,\n      folder_id: folderId,                     // Top-level fallback\n      messages: {\n        ...item.json.messages,\n        messages: updatedMessages              // Updated messages array\n      }\n    }\n  };\n});\n\nreturn output;\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -640,
+        820
+      ],
+      "id": "99b7c6a8-e2ea-46dc-8caf-961b2cf398a4",
+      "name": "Code7"
+    },
+    {
+      "parameters": {
+        "options": {
+          "reset": false
+        }
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        -800,
+        980
+      ],
+      "id": "d310f300-5979-45a8-bcd1-76c565b46634",
+      "name": "Loop Over Items3"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "messages.messages",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        -500,
+        1100
+      ],
+      "id": "1e069c5c-5560-488e-9b4b-cf88a7b06b86",
+      "name": "Split Out1"
+    },
+    {
+      "parameters": {
+        "jsCode": "var message_ids = []\nvar file_id = $input.first().json.id;\nfor (const m of $('No Operation, do nothing').all()) {\n  // Ensure we're processing TYPE_EMAIL messages only\n  \n    \n    const folder_id = m.json.folder_id;\n    for (const n of m.json.messages.messages) {\n      if (n.messageType == \"TYPE_EMAIL\") {\n        for (const messageId of n.meta.email.messageIds) {\n        message_ids.push({\n          json: {\n            messageId: messageId,\n            conversationId: n.conversationId,\n            folder_id: folder_id,\n            file_id:file_id\n          }\n        });\n      }\n      }\n      \n    }\n}\n\nreturn message_ids;"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        700,
+        880
+      ],
+      "id": "967329a8-bd25-4d2d-b18e-52959778ea64",
+      "name": "Code5"
+    },
+    {
+      "parameters": {
+        "options": {
+          "reset": false
+        }
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        340,
+        860
+      ],
+      "id": "69b4e6f1-7c3b-4066-8dbc-4d48079e6ca2",
+      "name": "Loop Over Items2"
+    },
+    {
+      "parameters": {
+        "url": "=https://services.leadconnectorhq.com/conversations/messages/email/{{ $json.messageId }}",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "highLevelOAuth2Api",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Version",
+              "value": "2021-04-15"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        240,
+        660
+      ],
+      "id": "b4545ff4-2cae-44f6-bbfc-4e37c10fe9c4",
+      "name": "HTTP Request2",
+      "credentials": {
+        "highLevelOAuth2Api": {
+          "id": "iXB9R7m6ptTsOp4R",
+          "name": "HighLevel talkinfrench"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Get the HTTP response from HTTP Request2\nconst httpResponse = $input.first().json;\n\n// Get the conversation context from Loop Over Items2\nconst loopItem = $('Loop Over Items2').first();\n\n// Merge the conversation context with the HTTP response\nreturn [{\n  json: {\n    ...httpResponse,\n    conversationId: loopItem.json.conversationId,\n    folder_id: loopItem.json.folder_id\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        520,
+        660
+      ],
+      "id": "5655db90-38ae-4ecd-b9b0-3947680e20a4",
+      "name": "Merge Context"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Check if we have email data\nif (!$input.first().json.emailMessage) {\n  return [{\n    json: {\n      formatted: '[No email message found]\\n',\n      conversationId: 'unknown',\n      folder_id: 'unknown',\n      fileId: $('Create Empty File').first().json.id\n    }\n  }];\n}\n\nconst emailData = $input.first().json.emailMessage;\n\nconst timestamp = new Date(emailData.dateAdded || Date.now()).toISOString();\nconst sender = \"User\";\nconst subject = (emailData.subject || \"[No Subject]\").trim();\n\nlet body = emailData.body || \"[No Body]\";\n\n// Step 1: Strip all HTML tags\nbody = body.replace(/<\\/?[^>]+(>|$)/g, '');\n\n// Step 2: Decode basic HTML entities\nbody = body.replace(/&nbsp;/g, ' ')\n           .replace(/&amp;/g, '&')\n           .replace(/&lt;/g, '<')\n           .replace(/&gt;/g, '>');\n\n// Step 3: Remove large chunks of repeating unicode spaces or junk sequences\nbody = body.replace(/[\\u200B-\\u200D\\uFEFF]+/g, ''); // Zero-width spaces\nbody = body.replace(/(‌|‍|﻿|\\u00A0|\\u202F)+/g, ' '); // Non-breaking spaces, invisible chars\n\n// Step 4: Remove long sequences of random whitespace or line breaks\nbody = body.replace(/\\s{3,}/g, ' ');     // More than 2 spaces => 1 space\nbody = body.replace(/\\n{2,}/g, '\\n');    // Multiple newlines => single newline\nbody = body.replace(/[ \\t]+\\n/g, '\\n');  // Strip spaces before line breaks\nbody = body.replace(/\\n[ \\t]+/g, '\\n');  // Strip spaces after line breaks\nbody = body.trim();\n\n// Optional: Strip footer content if desired (e.g., unsubscribe, address, copyright)\nbody = body.split(\"Want to change how you receive these emails?\")[0];\nbody = body.split(\"Copyright ©\")[0];\nbody = body.split(\"Talk in French30\")[0];\n\n// Get conversation context from the input - this should come from HTTP Request2\nconst conversationId = $input.first().json.conversationId || 'unknown';\nconst folder_id = $input.first().json.folder_id || 'unknown';\n\nreturn [{\n  json: {\n    formatted: `[${sender}] - ${timestamp}:\\nSubject: ${subject}\\n${body}\\n\\n`,\n    conversationId: conversationId,\n    folder_id: folder_id,\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        760,
+        660
+      ],
+      "id": "286c5a4a-8efa-49ab-8003-965293593ea5",
+      "name": "Code6"
+    },
+    {
+      "parameters": {
+        "jsCode": "const mergeData = $('Merge1').all();     // contains id (conversationId) and folder_id\nconst inputItems = $input.all();         // contains messages[].conversationId\n\n/** @type {{ [key: string]: string }} */\nconst folderIdMap = {};  // typed map\n\n// Build the folderId mapping using conversationId\nfor (const item of mergeData) {\n  const conversationId = item.json.id;\n  const folderId = item.json.folder_id;\n\n  if (conversationId) {\n    folderIdMap[conversationId] = folderId;\n  }\n}\n\n// Map folder_id to each item + each message in messages array\nconst output = inputItems.map(item => {\n  const messagesArray = item.json.messages?.messages || [];\n  const conversationId = messagesArray[0]?.conversationId;\n  const folderId = folderIdMap[conversationId] || null;\n\n  // Add folder_id to each message object\n  const updatedMessages = messagesArray.map(msg => ({\n    ...msg,\n    folder_id: folderId,\n  }));\n\n  return {\n    json: {\n      ...item.json,\n      folder_id: folderId,                     // Top-level fallback\n      messages: {\n        ...item.json.messages,\n        messages: updatedMessages              // Updated messages array\n      }\n    }\n  };\n});\n\nreturn output;\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        360,
+        1180
+      ],
+      "id": "a90821f4-016d-45f6-bffa-8ff2e02851f9",
+      "name": "Code3"
+    },
+    {
+      "parameters": {
+        "jsCode": "var filles_info = []\nfor(const m of $input.all()){\n\n  const folder_id = m.json.folder_id;\n  const fileName = `conversation_email_${new Date().toISOString().split('T')[0]}`;\n  filles_info.push({\n    fileName: fileName,\n    folderId: folder_id\n  })\n\n}\n\nreturn filles_info;"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        820,
+        1140
+      ],
+      "id": "5e04255a-c24a-4679-9cc1-0af3d10bbfdd",
+      "name": "Prepare File Info"
+    },
+    {
+      "parameters": {
+        "folderId": "={{ $('Code6').first().json.folder_id }}",
+        "title": "=conversation_email_{{ $now.format('yyyy-MM-dd') }}"
+      },
+      "type": "n8n-nodes-base.googleDocs",
+      "typeVersion": 2,
+      "position": [
+        1480,
+        700
+      ],
+      "id": "cbb7877f-2839-4bf3-bded-b64ca488b631",
+      "name": "Create Empty File",
+      "credentials": {
+        "googleDocsOAuth2Api": {
+          "id": "umjhvbolEfs1MbZb",
+          "name": "Google Docs account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentURL": "={{ $json.id }}",
+        "actionsUi": {
+          "actionFields": [
+            {
+              "action": "insert",
+              "text": "={{ $('Code6').item.json.formatted }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.googleDocs",
+      "typeVersion": 2,
+      "position": [
+        2020,
+        660
+      ],
+      "id": "9dd51ecc-8d78-4676-ab6a-9de7c2991cbc",
+      "name": "Append To File",
+      "credentials": {
+        "googleDocsOAuth2Api": {
+          "id": "umjhvbolEfs1MbZb",
+          "name": "Google Docs account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        560,
+        1120
+      ],
+      "id": "e5efccb3-259a-425d-b021-499c245fd3bb",
+      "name": "No Operation, do nothing"
+    },
+    {
+      "parameters": {
+        "resource": "fileFolder",
+        "queryString": "=conversation_email_{{ $now.format('yyyy-MM-dd') }}",
+        "filter": {
+          "folderId": {
+            "__rl": true,
+            "value": "={{ $json.folder_id }}",
+            "mode": "id"
+          }
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        1020,
+        660
+      ],
+      "id": "df3fbd9e-4b69-41f7-bb19-8a8bc040669e",
+      "name": "Google Drive",
+      "alwaysOutputData": true,
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "Rsfk1ogWsjMLbQQW",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "93ab0031-276a-40db-8aef-9aa03f8d74ae",
+              "leftValue": "={{ $json }}",
+              "rightValue": "",
+              "operator": {
+                "type": "object",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1240,
+        520
+      ],
+      "id": "79a63d51-01ff-4d89-b529-ea2e2f97dc6a",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "amount": 2
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        2240,
+        660
+      ],
+      "id": "f9a7c772-8b39-40db-801b-9af9120202c4",
+      "name": "Wait",
+      "webhookId": "96d10b0e-c3ce-41d4-8568-0f020e84fada"
+    },
+    {
+      "parameters": {
+        "amount": 2
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        1700,
+        700
+      ],
+      "id": "da8a10ed-04db-4ae7-8462-c63578872136",
+      "name": "Wait2",
+      "webhookId": "9e4eb476-a60a-42f4-b845-f01774fe37bc"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Drive2": {
+      "main": [
+        [
+          {
+            "node": "If1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If1": {
+      "main": [
+        [
+          {
+            "node": "Code2",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Google Drive3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request1": {
+      "main": [
+        [
+          {
+            "node": "Code3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Drive3": {
+      "main": [
+        [
+          {
+            "node": "Wait1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait1": {
+      "main": [
+        [
+          {
+            "node": "Code2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code1": {
+      "main": [
+        [
+          {
+            "node": "Code9",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code9": {
+      "main": [
+        [
+          {
+            "node": "Google Drive5",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Drive5": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [
+          {
+            "node": "Merge1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Google Drive2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code2": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge1": {
+      "main": [
+        [
+          {
+            "node": "If3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If3": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request3",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "HTTP Request1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request3": {
+      "main": [
+        [
+          {
+            "node": "Code7",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code7": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items3": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Split Out1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out1": {
+      "main": [
+        [
+          {
+            "node": "Code1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code5": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items2": {
+      "main": [
+        [],
+        [
+          {
+            "node": "HTTP Request2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request2": {
+      "main": [
+        [
+          {
+            "node": "Merge Context",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge Context": {
+      "main": [
+        [
+          {
+            "node": "Code6",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code6": {
+      "main": [
+        [
+          {
+            "node": "Google Drive",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code3": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare File Info": {
+      "main": [
+        [
+          {
+            "node": "Code5",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Empty File": {
+      "main": [
+        [
+          {
+            "node": "Wait2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append To File": {
+      "main": [
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "No Operation, do nothing": {
+      "main": [
+        [
+          {
+            "node": "Prepare File Info",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Drive": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Append To File",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Create Empty File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait2": {
+      "main": [
+        [
+          {
+            "node": "Append To File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "c8297e09-1764-41f3-9283-60f2f3c3092f",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "c8b724acc8129c1844d5ce9f8594f1a7e81bb10432df4d031ad378df75270b25"
+  },
+  "id": "VmZeyj3iHsukKkHz",
+  "tags": []
+}

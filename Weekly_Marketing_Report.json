@@ -1,0 +1,2781 @@
+{
+  "name": "Weekly Marketing Report",
+  "nodes": [
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1XouOsno7hsUHyvGDHjJmYcvShHlnLouBWbs0sQIG73g",
+          "mode": "list",
+          "cachedResultName": "2025 Precision Scorecard Template Talk In French V2",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1XouOsno7hsUHyvGDHjJmYcvShHlnLouBWbs0sQIG73g/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1178456151,
+          "mode": "list",
+          "cachedResultName": "Marketing",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1XouOsno7hsUHyvGDHjJmYcvShHlnLouBWbs0sQIG73g/edit#gid=1178456151"
+        },
+        "options": {
+          "dataLocationOnSheet": {
+            "values": {
+              "rangeDefinition": "specifyRangeA1",
+              "range": "C4:C5"
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.6,
+      "position": [
+        220,
+        180
+      ],
+      "id": "f90e1564-bfbb-47a9-a571-113483d4531c",
+      "name": "Get Week Index",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "ZAIM3zWlh1lB8bFJ",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "PUT",
+        "url": "https://sheets.googleapis.com/v4/spreadsheets/1XouOsno7hsUHyvGDHjJmYcvShHlnLouBWbs0sQIG73g/values/Marketing!C5?valueInputOption=USER_ENTERED",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "googleSheetsOAuth2Api",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"range\": \"Marketing!C5\",\n  \"majorDimension\": \"ROWS\",\n  \"values\": [[\"{{ $json.nextLetter }}\"]]\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        6280,
+        180
+      ],
+      "id": "3c2becb7-6e20-4251-8a4c-169777c36d48",
+      "name": "Update Week Index",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "ZAIM3zWlh1lB8bFJ",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Input: current column letter (e.g., 'A', 'Z', 'AA', 'AZ', ...)\n\nconst currentLetter = $('Get Week Index').first().json.col_1;\n\nfunction incrementExcelColumn(col) {\n  let carry = 1;\n  let result = \"\";\n\n  for (let i = col.length - 1; i >= 0; i--) {\n    let charCode = col.charCodeAt(i) - 65; // Convert 'A'..'Z' to 0..25\n    charCode += carry;\n\n    if (charCode === 26) {\n      charCode = 0;\n      carry = 1;\n    } else {\n      carry = 0;\n    }\n\n    result = String.fromCharCode(65 + charCode) + result;\n  }\n\n  if (carry === 1) {\n    result = \"A\" + result;\n  }\n\n  return result;\n}\n\n// Calculate nextLetter (1 step ahead)\nlet nextLetter = incrementExcelColumn(currentLetter);\n\n// Calculate nextFourthLetter (4 steps ahead)\nlet current = currentLetter;\nfor (let i = 0; i < 4; i++) {\n  current = incrementExcelColumn(current);\n}\nlet nextFourthLetter = current;\n\nreturn {\n  nextLetter,\n  nextFourthLetter\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        6080,
+        180
+      ],
+      "id": "d4cdc379-d771-47cc-996d-098f67a18016",
+      "name": "Increment Week Index"
+    },
+    {
+      "parameters": {
+        "method": "PUT",
+        "url": "https://sheets.googleapis.com/v4/spreadsheets/1XouOsno7hsUHyvGDHjJmYcvShHlnLouBWbs0sQIG73g/values/Marketing!C5?valueInputOption=USER_ENTERED",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "googleSheetsOAuth2Api",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"range\": \"Marketing!C5\",\n  \"majorDimension\": \"ROWS\",\n  \"values\": [[\"{{ $json.nextLetter }}\"]]\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        7400,
+        100
+      ],
+      "id": "766a0242-db27-4e42-951b-d47134a43004",
+      "name": "Update Week Index1",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "ZAIM3zWlh1lB8bFJ",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "weeks",
+              "triggerAtDay": [
+                3
+              ],
+              "triggerAtHour": 20
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        0,
+        180
+      ],
+      "id": "9afa9cd2-4d2c-4b80-bd1f-bcb1f19b6d8e",
+      "name": "Schedule Trigger1"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Input: current column letter (e.g., 'A', 'Z', 'AA', 'AZ', 'ZZ', ...)\n\nconst currentLetter = $('Get Week Index').first().json.col_1;\n\n// Convert Excel column letter (e.g., 'AB') to a number (e.g., 28)\nfunction columnLetterToNumber(col) {\n  let num = 0;\n  for (let i = 0; i < col.length; i++) {\n    num = num * 26 + (col.charCodeAt(i) - 64); // 'A' = 65\n  }\n  return num;\n}\n\n// Convert number (e.g., 28) to Excel column letter (e.g., 'AB')\nfunction numberToColumnLetter(num) {\n  let col = '';\n  while (num > 0) {\n    let rem = (num - 1) % 26;\n    col = String.fromCharCode(65 + rem) + col;\n    num = Math.floor((num - 1) / 26);\n  }\n  return col;\n}\n\nconst currentNumber = columnLetterToNumber(currentLetter);\nconst nextNumber = currentNumber + 3;\nconst nextLetter = numberToColumnLetter(nextNumber);\n\nreturn {nextLetter};\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        7180,
+        100
+      ],
+      "id": "7427d103-1f25-4de5-b9f8-6d9d23c44486",
+      "name": "Increment Index by 2"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.values[0][2] }}",
+                    "rightValue": "Actuals",
+                    "operator": {
+                      "type": "string",
+                      "operation": "notContains"
+                    },
+                    "id": "f2a58789-1914-4118-9449-b3112727d9f8"
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "74aff38e-a754-4b53-a191-3f0259572ec4",
+                    "leftValue": "={{ $json.values[0][2] }}",
+                    "rightValue": "Actuals",
+                    "operator": {
+                      "type": "string",
+                      "operation": "contains"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        6920,
+        180
+      ],
+      "id": "f8af0b2f-b1a6-4a73-aac8-47672fb7a47f",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "method": "PUT",
+        "url": "https://sheets.googleapis.com/v4/spreadsheets/1XouOsno7hsUHyvGDHjJmYcvShHlnLouBWbs0sQIG73g/values/Marketing!C5?valueInputOption=USER_ENTERED",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "googleSheetsOAuth2Api",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"range\": \"Marketing!C5\",\n  \"majorDimension\": \"ROWS\",\n  \"values\": [[\"{{ $json.nextLetter }}\"]]\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        7400,
+        280
+      ],
+      "id": "e3e0f18b-573b-4b62-890e-9de08a15b288",
+      "name": "Update Week Index2",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "ZAIM3zWlh1lB8bFJ",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Input: current column letter (e.g., 'A', 'Z', 'AA', 'AZ', 'ZZ', ...)\n\nconst currentLetter = $('Get Week Index').first().json.col_1;\n\n// Convert Excel column letter (e.g., 'AB') to a number (e.g., 28)\nfunction columnLetterToNumber(col) {\n  let num = 0;\n  for (let i = 0; i < col.length; i++) {\n    num = num * 26 + (col.charCodeAt(i) - 64); // 'A' = 65\n  }\n  return num;\n}\n\n// Convert number (e.g., 28) to Excel column letter (e.g., 'AB')\nfunction numberToColumnLetter(num) {\n  let col = '';\n  while (num > 0) {\n    let rem = (num - 1) % 26;\n    col = String.fromCharCode(65 + rem) + col;\n    num = Math.floor((num - 1) / 26);\n  }\n  return col;\n}\n\nconst currentNumber = columnLetterToNumber(currentLetter);\nconst nextNumber = currentNumber + 5;\nconst nextLetter = numberToColumnLetter(nextNumber);\n\nreturn {nextLetter};\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        7180,
+        280
+      ],
+      "id": "a8549e72-c3e9-4cc3-8a6b-4a17ddea915f",
+      "name": "Increment Index by 4"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "293f2a5c-6dc8-4764-904a-a02481a558bd",
+              "leftValue": "={{ $json.values[0][0] }}",
+              "rightValue": "Actuals",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        6700,
+        180
+      ],
+      "id": "1ee9527b-9729-47f7-b05e-f250081ffd44",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "a22e3ae1-1f3c-448c-97ea-4104d0e25c3e",
+              "name": "locationId",
+              "value": "hYbWhnSvqyEl9M8eAhVw",
+              "type": "string"
+            },
+            {
+              "id": "a366ed29-dd90-40c1-b6fb-2989f485e565",
+              "name": "fromDate",
+              "value": "={{ $json.values[0][0].toDateTime().set({year: $now.extract('year'), hour: 00, minute: 00}) }}",
+              "type": "string"
+            },
+            {
+              "id": "f1bbe85d-2cd5-4156-830b-317c2ade8fcf",
+              "name": "toDate",
+              "value": "={{ $json.values[2][0].toDateTime().set({year: $now.extract('year'), hour:23, minute: 59}) }}",
+              "type": "string"
+            },
+            {
+              "id": "baaef065-d5bc-4368-bf1c-c0d781349c25",
+              "name": "TIF_YT_ID",
+              "value": "UCZmqD32fOzWZGmmNf-0qNlA",
+              "type": "string"
+            },
+            {
+              "id": "e9e23b64-4f61-46d7-b2d1-34e810fd36c7",
+              "name": "MDS_YT_ID",
+              "value": "UCcqB_rm7oQZyxmSS1PR9atQ",
+              "type": "string"
+            },
+            {
+              "id": "d3acbdfe-31d3-4197-a7c7-a6885dbd5e27",
+              "name": "TIF_IG_ID",
+              "value": "17841400098440044",
+              "type": "string"
+            },
+            {
+              "id": "2f9057ed-6dbd-4a55-ab29-645ecae61902",
+              "name": "MDS_IG_ID",
+              "value": "17841403976880133",
+              "type": "string"
+            },
+            {
+              "id": "b8dcfe15-6334-4ede-b9bc-bfe39420c03d",
+              "name": "TIF_FB_ID",
+              "value": "317591148386732",
+              "type": "string"
+            },
+            {
+              "id": "a11c9666-7051-4bf9-8b05-8f9835398312",
+              "name": "MDS_FB_ID",
+              "value": "949981535111900",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        660,
+        180
+      ],
+      "id": "9084f8e6-b23a-414d-80f3-e1da30ddfa91",
+      "name": "Set Fields"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.1,
+      "position": [
+        5880,
+        180
+      ],
+      "id": "61fdfdc7-fc7a-429f-ab82-d4c2dcf3298a",
+      "name": "Merge"
+    },
+    {
+      "parameters": {
+        "resource": "campaign",
+        "options": {
+          "beforeSendTime": "={{ $('Set Fields').item.json.toDate }}",
+          "listId": "bac3844278",
+          "sinceSendTime": "={{ $('Set Fields').item.json.fromDate }}",
+          "sortDirection": "DESC",
+          "sortField": "send_time"
+        }
+      },
+      "type": "n8n-nodes-base.mailchimp",
+      "typeVersion": 1,
+      "position": [
+        1160,
+        -100
+      ],
+      "id": "26c81000-da9a-4c58-8424-537ac2e8c94c",
+      "name": "Get Campaigns (TIF)",
+      "credentials": {
+        "mailchimpApi": {
+          "id": "NMF3urloNe2c0PC3",
+          "name": "Mailchimp account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Get all campaign reports from previous node\nconst reports = $('Get Campaign Report (TIF)').all();\n\nif (reports.length === 0) {\n  return {\n    error: 'No campaign reports found',\n    metrics: {\n      avgOpenRate: '0%',\n      avgClickRate: '0%',\n      avgUnsubscribeRate: '0%'\n    }\n  };\n}\n\n// Initialize variables for calculation\nlet totalOpenRate = 0;\nlet totalClickRate = 0;\nlet totalUnsubscribeRate = 0;\nlet validCampaigns = 0;\n\n// For weighted averages (optional)\nlet totalEmailsSent = 0;\nlet totalOpens = 0;\nlet totalClicks = 0;\nlet totalUnsubscribed = 0;\n\n// Process each campaign report\nreports.forEach(item => {\n  const report = item.json;\n  \n  validCampaigns++;\n  \n  // Get the rates (MailChimp returns them as decimals)\n  const openRate = report.opens?.open_rate || 0;\n  const clickRate = report.clicks?.click_rate || 0;\n  \n  // Calculate unsubscribe rate\n  const unsubscribed = report.unsubscribed || 0;\n  const unsubscribeRate = unsubscribed / report.emails_sent;\n  \n  // Sum rates for simple average\n  totalOpenRate += openRate;\n  totalClickRate += clickRate;\n  totalUnsubscribeRate += unsubscribeRate;\n  \n  // Collect totals for weighted average (optional)\n  totalEmailsSent += report.emails_sent;\n  totalOpens += report.opens?.opens_total || 0;\n  totalClicks += report.clicks?.clicks_total || 0;\n  totalUnsubscribed += unsubscribed;\n});\n\n// Calculate simple averages (average of averages)\nconst avgOpenRate = validCampaigns > 0 ? (totalOpenRate / validCampaigns * 100) : 0;\nconst avgClickRate = validCampaigns > 0 ? (totalClickRate / validCampaigns * 100) : 0;\nconst avgUnsubscribeRate = validCampaigns > 0 ? (totalUnsubscribeRate / validCampaigns * 100) : 0;\n\n// Calculate weighted averages (based on total emails)\nconst weightedOpenRate = totalEmailsSent > 0 ? (totalOpens / totalEmailsSent * 100) : 0;\nconst weightedClickRate = totalEmailsSent > 0 ? (totalClicks / totalEmailsSent * 100) : 0;\nconst weightedUnsubscribeRate = totalEmailsSent > 0 ? (totalUnsubscribed / totalEmailsSent * 100) : 0;\n\n// Return both simple and weighted averages\nreturn {\n  summary: {\n    campaignsAnalyzed: validCampaigns,\n    totalEmailsSent: totalEmailsSent,\n  },\n  \n  // Simple averages (average of percentages)\n  simpleAverages: {\n    avgOpenRate: avgOpenRate.toFixed(2) + '%',\n    avgClickRate: avgClickRate.toFixed(2) + '%',\n    avgUnsubscribeRate: avgUnsubscribeRate.toFixed(3) + '%'\n  },\n  \n  // Weighted averages (total opens/total sent, etc.)\n  weightedAverages: {\n    openRate: weightedOpenRate.toFixed(2) + '%',\n    clickRate: weightedClickRate.toFixed(2) + '%',\n    unsubscribeRate: weightedUnsubscribeRate.toFixed(3) + '%'\n  }\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1560,
+        -100
+      ],
+      "id": "5c2576a7-5522-4a6c-a9dc-8181a6cc4022",
+      "name": "Calculate Rate Metrics (TIF)"
+    },
+    {
+      "parameters": {
+        "url": "=https://us6.api.mailchimp.com/3.0/reports/{{$json.id}}",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "mailchimpApi",
+        "options": {
+          "batching": {
+            "batch": {
+              "batchSize": 10
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1360,
+        -100
+      ],
+      "id": "ad06d138-4603-46fe-997a-cb4486471321",
+      "name": "Get Campaign Report (TIF)",
+      "credentials": {
+        "mailchimpApi": {
+          "id": "NMF3urloNe2c0PC3",
+          "name": "Mailchimp account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "campaign",
+        "options": {
+          "beforeSendTime": "={{ $('Set Fields').item.json.toDate }}",
+          "listId": "e648a0f2f6",
+          "sinceSendTime": "={{ $('Set Fields').item.json.fromDate }}",
+          "sortDirection": "DESC",
+          "sortField": "send_time"
+        }
+      },
+      "type": "n8n-nodes-base.mailchimp",
+      "typeVersion": 1,
+      "position": [
+        1160,
+        420
+      ],
+      "id": "c9513598-1c73-4f4d-8eb9-a9f51ab04931",
+      "name": "Get Campaigns (MDS)",
+      "credentials": {
+        "mailchimpApi": {
+          "id": "NMF3urloNe2c0PC3",
+          "name": "Mailchimp account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "=https://us6.api.mailchimp.com/3.0/reports/{{$json.id}}",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "mailchimpApi",
+        "options": {
+          "batching": {
+            "batch": {
+              "batchSize": 10
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1360,
+        420
+      ],
+      "id": "335bd0f7-c501-4e76-9bb0-7497558c61fb",
+      "name": "Get Campaign Report (MDS)",
+      "credentials": {
+        "mailchimpApi": {
+          "id": "NMF3urloNe2c0PC3",
+          "name": "Mailchimp account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "=https://youtubeanalytics.googleapis.com/v2/reports\n?ids=channel=={{ $('Set Fields').first().json.MDS_YT_ID }}\n&startDate={{ $('Set Fields').first().json.fromDate.toDateTime().format('yyyy-MM-dd') }}\n&endDate={{ $('Set Fields').first().json.toDate.toDateTime().format('yyyy-MM-dd') }}\n&metrics=views\n&filters=creatorContentType==videoOnDemand",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "youTubeOAuth2Api",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1960,
+        420
+      ],
+      "id": "2dd34395-bafb-4527-8568-a243022259a2",
+      "name": "Get YT Views (MDS)",
+      "credentials": {
+        "youTubeOAuth2Api": {
+          "id": "VOgjVONkxCkSPZXh",
+          "name": "YouTube account (mydailyspanish)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "video",
+        "returnAll": true,
+        "filters": {
+          "channelId": "={{ $('Set Fields').first().json.MDS_YT_ID }}",
+          "publishedAfter": "={{ $('Set Fields').first().json.fromDate }}",
+          "publishedBefore": "={{ $('Set Fields').first().json.toDate }}"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.youTube",
+      "typeVersion": 1,
+      "position": [
+        2160,
+        420
+      ],
+      "id": "1ec4dcac-4dbb-4e16-8bd8-5177dbc91090",
+      "name": "Get YT Content Uploaded (MDS)",
+      "alwaysOutputData": true,
+      "credentials": {
+        "youTubeOAuth2Api": {
+          "id": "VOgjVONkxCkSPZXh",
+          "name": "YouTube account (mydailyspanish)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "video",
+        "returnAll": true,
+        "filters": {
+          "channelId": "={{ $('Set Fields').first().json.TIF_YT_ID }}",
+          "publishedAfter": "={{ $('Set Fields').first().json.fromDate }}",
+          "publishedBefore": "={{ $('Set Fields').first().json.toDate }}"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.youTube",
+      "typeVersion": 1,
+      "position": [
+        2160,
+        -100
+      ],
+      "id": "8e6c1790-e893-4aec-956a-b289010e6081",
+      "name": "Get YT Content Uploaded (TIF)",
+      "alwaysOutputData": true,
+      "credentials": {
+        "youTubeOAuth2Api": {
+          "id": "pkNcfWPuVIkDQGyZ",
+          "name": "YouTube account (talkinfrench)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Get all campaign reports from previous node\nconst reports = $('Get Campaign Report (MDS)').all();\n\nif (reports.length === 0) {\n  return {\n    error: 'No campaign reports found',\n    metrics: {\n      avgOpenRate: '0%',\n      avgClickRate: '0%',\n      avgUnsubscribeRate: '0%'\n    }\n  };\n}\n\n// Initialize variables for calculation\nlet totalOpenRate = 0;\nlet totalClickRate = 0;\nlet totalUnsubscribeRate = 0;\nlet validCampaigns = 0;\n\n// For weighted averages (optional)\nlet totalEmailsSent = 0;\nlet totalOpens = 0;\nlet totalClicks = 0;\nlet totalUnsubscribed = 0;\n\n// Process each campaign report\nreports.forEach(item => {\n  const report = item.json;\n  \n  validCampaigns++;\n  \n  // Get the rates (MailChimp returns them as decimals)\n  const openRate = report.opens?.open_rate || 0;\n  const clickRate = report.clicks?.click_rate || 0;\n  \n  // Calculate unsubscribe rate\n  const unsubscribed = report.unsubscribed || 0;\n  const unsubscribeRate = unsubscribed / report.emails_sent;\n  \n  // Sum rates for simple average\n  totalOpenRate += openRate;\n  totalClickRate += clickRate;\n  totalUnsubscribeRate += unsubscribeRate;\n  \n  // Collect totals for weighted average (optional)\n  totalEmailsSent += report.emails_sent;\n  totalOpens += report.opens?.opens_total || 0;\n  totalClicks += report.clicks?.clicks_total || 0;\n  totalUnsubscribed += unsubscribed;\n});\n\n// Calculate simple averages (average of averages)\nconst avgOpenRate = validCampaigns > 0 ? (totalOpenRate / validCampaigns * 100) : 0;\nconst avgClickRate = validCampaigns > 0 ? (totalClickRate / validCampaigns * 100) : 0;\nconst avgUnsubscribeRate = validCampaigns > 0 ? (totalUnsubscribeRate / validCampaigns * 100) : 0;\n\n// Calculate weighted averages (based on total emails)\nconst weightedOpenRate = totalEmailsSent > 0 ? (totalOpens / totalEmailsSent * 100) : 0;\nconst weightedClickRate = totalEmailsSent > 0 ? (totalClicks / totalEmailsSent * 100) : 0;\nconst weightedUnsubscribeRate = totalEmailsSent > 0 ? (totalUnsubscribed / totalEmailsSent * 100) : 0;\n\n// Return both simple and weighted averages\nreturn {\n  summary: {\n    campaignsAnalyzed: validCampaigns,\n    totalEmailsSent: totalEmailsSent,\n  },\n  \n  // Simple averages (average of percentages)\n  simpleAverages: {\n    avgOpenRate: avgOpenRate.toFixed(2) + '%',\n    avgClickRate: avgClickRate.toFixed(2) + '%',\n    avgUnsubscribeRate: avgUnsubscribeRate.toFixed(3) + '%'\n  },\n  \n  // Weighted averages (total opens/total sent, etc.)\n  weightedAverages: {\n    openRate: weightedOpenRate.toFixed(2) + '%',\n    clickRate: weightedClickRate.toFixed(2) + '%',\n    unsubscribeRate: weightedUnsubscribeRate.toFixed(3) + '%'\n  }\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1560,
+        420
+      ],
+      "id": "248bccc3-2820-46a8-a7b6-20f7289fe4cd",
+      "name": "Calculate Rate Metrics (MDS)"
+    },
+    {
+      "parameters": {
+        "graphApiVersion": "v22.0",
+        "node": "={{ $('Set Fields').first().json.TIF_IG_ID }}",
+        "edge": "insights",
+        "options": {
+          "queryParameters": {
+            "parameter": [
+              {
+                "name": "metric",
+                "value": "follows_and_unfollows"
+              },
+              {
+                "name": "period",
+                "value": "day"
+              },
+              {
+                "name": "since",
+                "value": "={{ $('Set Fields').first().json.fromDate }}"
+              },
+              {
+                "name": "until",
+                "value": "={{ $('Set Fields').first().json.toDate }}"
+              },
+              {
+                "name": "breakdown",
+                "value": "follow_type"
+              },
+              {
+                "name": "metric_type",
+                "value": "total_value"
+              }
+            ]
+          }
+        }
+      },
+      "type": "n8n-nodes-base.facebookGraphApi",
+      "typeVersion": 1,
+      "position": [
+        2360,
+        -100
+      ],
+      "id": "4fcd8e56-fb86-48d1-bc20-571980fa3ec7",
+      "name": "Get IG Followers (TIF)",
+      "credentials": {
+        "facebookGraphApi": {
+          "id": "1zBekXr9fe2glsge",
+          "name": "Facebook Graph account (TIF & MDS)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "graphApiVersion": "v22.0",
+        "node": "={{ $('Set Fields').first().json.TIF_IG_ID }}",
+        "edge": "media",
+        "options": {
+          "fields": {
+            "field": [
+              {
+                "name": "media_product_type"
+              }
+            ]
+          },
+          "queryParameters": {
+            "parameter": [
+              {
+                "name": "since",
+                "value": "={{ $('Set Fields').first().json.fromDate }}"
+              },
+              {
+                "name": "until",
+                "value": "={{ $('Set Fields').first().json.toDate }}"
+              }
+            ]
+          }
+        }
+      },
+      "type": "n8n-nodes-base.facebookGraphApi",
+      "typeVersion": 1,
+      "position": [
+        2760,
+        -100
+      ],
+      "id": "db702348-0b45-49f3-b68d-de4c9cf0eb9a",
+      "name": "Get IG Content Uploaded (TIF)",
+      "alwaysOutputData": false,
+      "credentials": {
+        "facebookGraphApi": {
+          "id": "1zBekXr9fe2glsge",
+          "name": "Facebook Graph account (TIF & MDS)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "graphApiVersion": "v22.0",
+        "node": "={{ $('Set Fields').first().json.TIF_FB_ID }}",
+        "edge": "insights",
+        "options": {
+          "queryParameters": {
+            "parameter": [
+              {
+                "name": "access_token",
+                "value": "EAAeFlqhZB5iABOyzp5ywHlMp6H2miw1sxISYHHXuZAZClC9GEoezj67tkAMCiOZCPkF9GEZAFCelyDWkP8Vf3ERcw2dKH9PYMceuqUApwXLlas5B6IzO3XGTM0tDsE2ZA2ZAQhnBZApEPFTlrbZCnBxKipJHSETVmyBX94e9fj2ZC5241CeAD8aNuN0CFX9vs06YkJWXg7y9TJ"
+              },
+              {
+                "name": "metric",
+                "value": "page_daily_follows_unique,page_daily_unfollows_unique"
+              },
+              {
+                "name": "period",
+                "value": "day"
+              },
+              {
+                "name": "=since",
+                "value": "={{ $('Set Fields').first().json.fromDate }}"
+              },
+              {
+                "name": "until",
+                "value": "={{ $('Set Fields').first().json.toDate }}"
+              }
+            ]
+          }
+        }
+      },
+      "type": "n8n-nodes-base.facebookGraphApi",
+      "typeVersion": 1,
+      "position": [
+        3160,
+        -100
+      ],
+      "id": "8dd65d4e-31e2-4da5-89a8-55c2b3fda31c",
+      "name": "Get FB Followers (TIF)",
+      "credentials": {
+        "facebookGraphApi": {
+          "id": "1zBekXr9fe2glsge",
+          "name": "Facebook Graph account (TIF & MDS)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "graphApiVersion": "v22.0",
+        "node": "={{ $('Set Fields').first().json.MDS_IG_ID }}",
+        "edge": "media",
+        "options": {
+          "fields": {
+            "field": [
+              {
+                "name": "media_product_type"
+              }
+            ]
+          },
+          "queryParameters": {
+            "parameter": [
+              {
+                "name": "since",
+                "value": "={{ $('Set Fields').first().json.fromDate }}"
+              },
+              {
+                "name": "until",
+                "value": "={{ $('Set Fields').first().json.toDate }}"
+              }
+            ]
+          }
+        }
+      },
+      "type": "n8n-nodes-base.facebookGraphApi",
+      "typeVersion": 1,
+      "position": [
+        2760,
+        420
+      ],
+      "id": "fab4eb08-c6e2-408b-8572-690c83a276d5",
+      "name": "Get IG Content Uploaded (MDS)",
+      "alwaysOutputData": false,
+      "credentials": {
+        "facebookGraphApi": {
+          "id": "1zBekXr9fe2glsge",
+          "name": "Facebook Graph account (TIF & MDS)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const insights = $input.first().json.data;\nlet totalFollows = 0;\nlet totalUnfollows = 0;\n\n// Find the object with the follows data\nconst followsData = insights.find(metric => metric.name === 'page_daily_follows_unique');\n\n// If follows data exists, loop through its daily values and sum them up\nif (followsData && followsData.values) {\n  for (const dailyValue of followsData.values) {\n    totalFollows += dailyValue.value;\n  }\n}\n\n// Find the object with the unfollows data\nconst unfollowsData = insights.find(metric => metric.name === 'page_daily_unfollows_unique');\n\n// If unfollows data exists, loop through its daily values and sum them up\nif (unfollowsData && unfollowsData.values) {\n  for (const dailyValue of unfollowsData.values) {\n    totalUnfollows += dailyValue.value;\n  }\n}\n\n// Calculate the final net growth\nconst netGrowth = totalFollows - totalUnfollows;\n\n// Return a single object with the final numbers\nreturn {totalFollows, totalUnfollows, FB_net_follower_growth: netGrowth};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        3360,
+        -100
+      ],
+      "id": "9273f2ad-b375-4665-879b-7b60289fa6fa",
+      "name": "Calculate FB Net Growth (TIF)"
+    },
+    {
+      "parameters": {
+        "jsCode": "const data = $input.first().json.data[0].total_value.breakdowns[0].results;\n\nconst totalNetGrowth = data[0].value - data[1].value;\n\n// Return a single item with the result\nreturn {IG_net_follower_growth: totalNetGrowth};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2560,
+        -100
+      ],
+      "id": "da0a5c7a-775a-486f-bfac-db542289cfc3",
+      "name": "Calculate IG Net Growth (TIF)"
+    },
+    {
+      "parameters": {
+        "graphApiVersion": "v22.0",
+        "node": "={{ $('Set Fields').first().json.MDS_IG_ID }}",
+        "edge": "insights",
+        "options": {
+          "queryParameters": {
+            "parameter": [
+              {
+                "name": "metric",
+                "value": "follows_and_unfollows"
+              },
+              {
+                "name": "period",
+                "value": "day"
+              },
+              {
+                "name": "since",
+                "value": "={{ $('Set Fields').first().json.fromDate }}"
+              },
+              {
+                "name": "until",
+                "value": "={{ $('Set Fields').first().json.toDate }}"
+              },
+              {
+                "name": "breakdown",
+                "value": "follow_type"
+              },
+              {
+                "name": "metric_type",
+                "value": "total_value"
+              }
+            ]
+          }
+        }
+      },
+      "type": "n8n-nodes-base.facebookGraphApi",
+      "typeVersion": 1,
+      "position": [
+        2360,
+        420
+      ],
+      "id": "9ebc317f-670c-4724-845c-0eafc4e92f61",
+      "name": "Get IG Followers (MDS)",
+      "credentials": {
+        "facebookGraphApi": {
+          "id": "1zBekXr9fe2glsge",
+          "name": "Facebook Graph account (TIF & MDS)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const data = $input.first().json.data[0].total_value.breakdowns[0].results;\n\nconst totalNetGrowth = data[0].value - data[1].value;\n\n// Return a single item with the result\nreturn {IG_net_follower_growth: totalNetGrowth};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2560,
+        420
+      ],
+      "id": "737f8701-1776-4841-80da-bcd46c32774a",
+      "name": "Calculate IG Net Growth (MDS)"
+    },
+    {
+      "parameters": {
+        "graphApiVersion": "v22.0",
+        "node": "={{ $('Set Fields').first().json.MDS_FB_ID }}",
+        "edge": "insights",
+        "options": {
+          "queryParameters": {
+            "parameter": [
+              {
+                "name": "access_token",
+                "value": "EAAeFlqhZB5iABO2CA6H0l2nbgpT5qZAlaKk1kwlIofYpYPscOlsawX0ExiNY8Rylkk7tR7bZA8A1TDsOuElVOsUS7hrfy6tJ5HZAENo5ZAnUHjI8RIZCTBECc36584ZCfNat5jdNKEZC3J9zZAir5S11u14CIlzoVdTZB5UaK8Da8KPjajlZB2SH2rHmrWj6P7jSYyYDAmz"
+              },
+              {
+                "name": "metric",
+                "value": "page_daily_follows_unique,page_daily_unfollows_unique"
+              },
+              {
+                "name": "period",
+                "value": "day"
+              },
+              {
+                "name": "since",
+                "value": "={{ $('Set Fields').first().json.fromDate }}"
+              },
+              {
+                "name": "until",
+                "value": "={{ $('Set Fields').first().json.toDate }}"
+              }
+            ]
+          }
+        }
+      },
+      "type": "n8n-nodes-base.facebookGraphApi",
+      "typeVersion": 1,
+      "position": [
+        3160,
+        420
+      ],
+      "id": "e76efe68-3907-49a3-b8b5-110c42f85dc8",
+      "name": "Get FB Followers (MDS)",
+      "credentials": {
+        "facebookGraphApi": {
+          "id": "1zBekXr9fe2glsge",
+          "name": "Facebook Graph account (TIF & MDS)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const insights = $input.first().json.data;\nlet totalFollows = 0;\nlet totalUnfollows = 0;\n\n// Find the object with the follows data\nconst followsData = insights.find(metric => metric.name === 'page_daily_follows_unique');\n\n// If follows data exists, loop through its daily values and sum them up\nif (followsData && followsData.values) {\n  for (const dailyValue of followsData.values) {\n    totalFollows += dailyValue.value;\n  }\n}\n\n// Find the object with the unfollows data\nconst unfollowsData = insights.find(metric => metric.name === 'page_daily_unfollows_unique');\n\n// If unfollows data exists, loop through its daily values and sum them up\nif (unfollowsData && unfollowsData.values) {\n  for (const dailyValue of unfollowsData.values) {\n    totalUnfollows += dailyValue.value;\n  }\n}\n\n// Calculate the final net growth\nconst netGrowth = totalFollows - totalUnfollows;\n\n// Return a single object with the final numbers\nreturn {totalFollows, totalUnfollows, FB_net_follower_growth: netGrowth};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        3360,
+        420
+      ],
+      "id": "d495006f-5b84-402b-8522-6560630ea328",
+      "name": "Calculate FB Net Growth (MDS)"
+    },
+    {
+      "parameters": {
+        "method": "PUT",
+        "url": "=https://sheets.googleapis.com/v4/spreadsheets/1XouOsno7hsUHyvGDHjJmYcvShHlnLouBWbs0sQIG73g/values/Marketing!{{ $('Get Week Index').first().json.col_1 }}9:{{ $('Get Week Index').first().json.col_1 }}10?valueInputOption=RAW",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "googleSheetsOAuth2Api",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"range\": \"Marketing!{{ $('Get Week Index').first().json.col_1 }}9:{{ $('Get Week Index').first().json.col_1 }}10\",\n  \"majorDimension\": \"ROWS\",\n  \"values\": [\n    [\"{{ $json.YT_views }}\"],\n    [\"{{ $json.YT_content }}\"]\n  ]\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        4160,
+        -100
+      ],
+      "id": "6eb959d6-712b-4425-b3d4-80d08b5311f2",
+      "name": "Update Google Sheets (TIF)",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "ZAIM3zWlh1lB8bFJ",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "PUT",
+        "url": "=https://sheets.googleapis.com/v4/spreadsheets/1XouOsno7hsUHyvGDHjJmYcvShHlnLouBWbs0sQIG73g/values/Marketing!{{ $('Get Week Index').first().json.col_1 }}13?valueInputOption=USER_ENTERED",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "googleSheetsOAuth2Api",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"range\": \"Marketing!{{ $('Get Week Index').first().json.col_1 }}13\",\n  \"majorDimension\": \"ROWS\",\n  \"values\": [\n    [\"{{ $('Set Fields (TIF)').item.json.FB_net_growth }}\"]\n  ]\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        4360,
+        -100
+      ],
+      "id": "e6aa309f-6224-42c1-af57-fa4696ca0b07",
+      "name": "Update Google Sheets (TIF)1",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "ZAIM3zWlh1lB8bFJ",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "c1021296-8103-43ad-9b14-d15b27393b86",
+              "name": "YT_net_growth",
+              "value": "={{ $('Get New Subscribers (TIF)').first().json.rows[0][0] - $('Get New Subscribers (TIF)').first().json.rows[0][1] }}",
+              "type": "number"
+            },
+            {
+              "id": "466e6181-80e6-4ece-b158-5cc308cfc16f",
+              "name": "YT_views",
+              "value": "={{ $('Get YT Views (TIF)').first().json.rows[0][0] }}",
+              "type": "number"
+            },
+            {
+              "id": "c8542652-cc00-44d9-89b9-91761fa504a8",
+              "name": "YT_content",
+              "value": "={{ $('Get YT Content Uploaded (TIF)').all().length }}",
+              "type": "number"
+            },
+            {
+              "id": "60eddba6-3e20-461c-9de2-157a3a1f1cbc",
+              "name": "FB_net_growth",
+              "value": "={{ $('Calculate FB Net Growth (TIF)').first().json.FB_net_follower_growth }}",
+              "type": "number"
+            },
+            {
+              "id": "1ea5d492-62c6-4643-8cfc-c13c8905d687",
+              "name": "IG_net_growth",
+              "value": "={{ $('Calculate IG Net Growth (TIF)').first().json.IG_net_follower_growth }}",
+              "type": "number"
+            },
+            {
+              "id": "516cd439-97f6-49fa-8fc3-5020125566f4",
+              "name": "FB_views",
+              "value": "={{ $json.totalFBViews }}",
+              "type": "number"
+            },
+            {
+              "id": "ae9cf7fd-1edd-4786-8fc9-bc8a62ae7c39",
+              "name": "IG_views",
+              "value": "={{ $('Get IG Views (TIF)').first().json.data[0].total_value.value }}",
+              "type": "number"
+            },
+            {
+              "id": "5bb4373f-e90d-4295-8733-7929bb770135",
+              "name": "IG_content",
+              "value": "={{ $('Get IG Content Uploaded (TIF)').first().json.data.length }}",
+              "type": "number"
+            },
+            {
+              "id": "e437f78c-f761-4433-988f-21ce10a7b337",
+              "name": "mailchimp_subs",
+              "value": "={{ $('Get Lead Signups (TIF)').first().json.total_items }}",
+              "type": "number"
+            },
+            {
+              "id": "1b6bf0be-2058-44db-bee6-3e01e2c02417",
+              "name": "mailchimp_open_rate",
+              "value": "={{ $('Calculate Rate Metrics (TIF)').first().json.simpleAverages.avgOpenRate }}",
+              "type": "string"
+            },
+            {
+              "id": "e4908296-4520-4d29-acdd-5f818f957db5",
+              "name": "mailchimp_unsubscribe_rate",
+              "value": "={{ $('Calculate Rate Metrics (TIF)').first().json.simpleAverages.avgUnsubscribeRate }}",
+              "type": "string"
+            },
+            {
+              "id": "f5585556-976a-4edd-8c53-cc858b3d1d82",
+              "name": "mailchimp_clickthrough_rate",
+              "value": "={{ $('Calculate Rate Metrics (TIF)').first().json.simpleAverages.avgClickRate }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        3960,
+        -100
+      ],
+      "id": "f7f5529e-c18c-4e15-91c2-74ff789a6147",
+      "name": "Set Fields (TIF)"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "c1021296-8103-43ad-9b14-d15b27393b86",
+              "name": "YT_net_growth",
+              "value": "={{ $('Get New Subscribers (MDS)').first().json.rows[0][0] - $('Get New Subscribers (MDS)').first().json.rows[0][1] }}",
+              "type": "number"
+            },
+            {
+              "id": "466e6181-80e6-4ece-b158-5cc308cfc16f",
+              "name": "YT_views",
+              "value": "={{ $('Get YT Views (MDS)').first().json.rows[0][0] }}",
+              "type": "number"
+            },
+            {
+              "id": "c8542652-cc00-44d9-89b9-91761fa504a8",
+              "name": "YT_content",
+              "value": "={{ $('Get YT Content Uploaded (MDS)').all().length }}",
+              "type": "number"
+            },
+            {
+              "id": "60eddba6-3e20-461c-9de2-157a3a1f1cbc",
+              "name": "FB_net_growth",
+              "value": "={{ $('Calculate FB Net Growth (MDS)').first().json.FB_net_follower_growth }}",
+              "type": "number"
+            },
+            {
+              "id": "1ea5d492-62c6-4643-8cfc-c13c8905d687",
+              "name": "IG_net_growth",
+              "value": "={{ $('Calculate IG Net Growth (MDS)').first().json.IG_net_follower_growth }}",
+              "type": "number"
+            },
+            {
+              "id": "516cd439-97f6-49fa-8fc3-5020125566f4",
+              "name": "FB_views",
+              "value": "={{ $json.totalFBViews }}",
+              "type": "number"
+            },
+            {
+              "id": "ae9cf7fd-1edd-4786-8fc9-bc8a62ae7c39",
+              "name": "IG_views",
+              "value": "={{ $('Get IG Views (MDS)').first().json.data[0].total_value.value }}",
+              "type": "number"
+            },
+            {
+              "id": "5bb4373f-e90d-4295-8733-7929bb770135",
+              "name": "IG_content",
+              "value": "={{ $('Get IG Content Uploaded (MDS)').first().json.data.length }}",
+              "type": "number"
+            },
+            {
+              "id": "e437f78c-f761-4433-988f-21ce10a7b337",
+              "name": "mailchimp_subs",
+              "value": "={{ $('Get Lead Signups (MDS)').first().json.total_items }}",
+              "type": "number"
+            },
+            {
+              "id": "1b6bf0be-2058-44db-bee6-3e01e2c02417",
+              "name": "mailchimp_open_rate",
+              "value": "={{ $('Calculate Rate Metrics (MDS)').first().json.simpleAverages.avgOpenRate }}",
+              "type": "string"
+            },
+            {
+              "id": "e4908296-4520-4d29-acdd-5f818f957db5",
+              "name": "mailchimp_unsubscribe_rate",
+              "value": "={{ $('Calculate Rate Metrics (MDS)').first().json.simpleAverages.avgUnsubscribeRate }}",
+              "type": "string"
+            },
+            {
+              "id": "f5585556-976a-4edd-8c53-cc858b3d1d82",
+              "name": "mailchimp_clickthrough_rate",
+              "value": "={{ $('Calculate Rate Metrics (MDS)').first().json.simpleAverages.avgClickRate }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        3960,
+        420
+      ],
+      "id": "53909a54-1b85-4045-92f1-ef1f55c2278b",
+      "name": "Set Fields (MDS)"
+    },
+    {
+      "parameters": {
+        "method": "PUT",
+        "url": "=https://sheets.googleapis.com/v4/spreadsheets/1XouOsno7hsUHyvGDHjJmYcvShHlnLouBWbs0sQIG73g/values/Marketing!{{ $('Get Week Index').first().json.col_1 }}33:{{ $('Get Week Index').first().json.col_1 }}35?valueInputOption=USER_ENTERED",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "googleSheetsOAuth2Api",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"range\": \"Marketing!{{ $('Get Week Index').first().json.col_1 }}33:{{ $('Get Week Index').first().json.col_1 }}35\",\n  \"majorDimension\": \"ROWS\",\n  \"values\": [\n    [\"{{ $json.YT_net_growth }}\"],\n    [\"{{ $json.YT_views }}\"],\n    [\"{{ $json.YT_content }}\"]\n  ]\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        4160,
+        420
+      ],
+      "id": "b0c25b3c-771f-402e-973a-026fce83387e",
+      "name": "Update Google Sheets (MDS)",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "ZAIM3zWlh1lB8bFJ",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "PUT",
+        "url": "=https://sheets.googleapis.com/v4/spreadsheets/1XouOsno7hsUHyvGDHjJmYcvShHlnLouBWbs0sQIG73g/values/Marketing!{{ $('Get Week Index').first().json.col_1 }}38?valueInputOption=USER_ENTERED",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "googleSheetsOAuth2Api",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"range\": \"Marketing!{{ $('Get Week Index').first().json.col_1 }}38\",\n  \"majorDimension\": \"ROWS\",\n  \"values\": [\n    [\"{{ $('Set Fields (MDS)').item.json.FB_net_growth }}\"]\n  ]\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        4360,
+        420
+      ],
+      "id": "2357f44f-a4cd-4b23-aaf6-65bac9d715bb",
+      "name": "Update Google Sheets (MDS)1",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "ZAIM3zWlh1lB8bFJ",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "PUT",
+        "url": "=https://sheets.googleapis.com/v4/spreadsheets/1XouOsno7hsUHyvGDHjJmYcvShHlnLouBWbs0sQIG73g/values/Marketing!{{ $('Get Week Index').first().json.col_1 }}40:{{ $('Get Week Index').first().json.col_1 }}42?valueInputOption=USER_ENTERED",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "googleSheetsOAuth2Api",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"range\": \"Marketing!{{ $('Get Week Index').first().json.col_1 }}40:{{ $('Get Week Index').first().json.col_1 }}42\",\n  \"majorDimension\": \"ROWS\",\n  \"values\": [\n    [\"{{ $('Set Fields (MDS)').item.json.IG_net_growth }}\"],\n    [\"{{ $('Set Fields (MDS)').item.json.IG_views }}\"],\n    [\"{{ $('Set Fields (MDS)').item.json.FB_views }}\"]\n  ]\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        4560,
+        420
+      ],
+      "id": "6cf03bc7-961d-47ea-808f-747a8b71fba4",
+      "name": "Update Google Sheets (MDS)2",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "ZAIM3zWlh1lB8bFJ",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "PUT",
+        "url": "=https://sheets.googleapis.com/v4/spreadsheets/1XouOsno7hsUHyvGDHjJmYcvShHlnLouBWbs0sQIG73g/values/Marketing!{{ $('Get Week Index').first().json.col_1 }}45?valueInputOption=USER_ENTERED",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "googleSheetsOAuth2Api",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"range\": \"Marketing!{{ $('Get Week Index').first().json.col_1 }}45\",\n  \"majorDimension\": \"ROWS\",\n  \"values\": [\n    [\"{{ $('Set Fields (MDS)').item.json['IG_content'] }}\"]\n  ]\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        4760,
+        420
+      ],
+      "id": "455fa42d-a77b-47ca-b8a6-ba9986e98766",
+      "name": "Update Google Sheets (MDS)3",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "ZAIM3zWlh1lB8bFJ",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "PUT",
+        "url": "=https://sheets.googleapis.com/v4/spreadsheets/1XouOsno7hsUHyvGDHjJmYcvShHlnLouBWbs0sQIG73g/values/Marketing!{{ $('Get Week Index').first().json.col_1 }}47?valueInputOption=USER_ENTERED",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "googleSheetsOAuth2Api",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"range\": \"Marketing!{{ $('Get Week Index').first().json.col_1 }}47\",\n  \"majorDimension\": \"ROWS\",\n  \"values\": [\n    [\"{{ $('Set Fields (MDS)').item.json.mailchimp_subs }}\"]\n  ]\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        4960,
+        420
+      ],
+      "id": "555fb195-c9ad-41e9-b73b-fc2333d2ac22",
+      "name": "Update Google Sheets (MDS)4",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "ZAIM3zWlh1lB8bFJ",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "PUT",
+        "url": "=https://sheets.googleapis.com/v4/spreadsheets/1XouOsno7hsUHyvGDHjJmYcvShHlnLouBWbs0sQIG73g/values/Marketing!{{ $('Get Week Index').first().json.col_1 }}52:{{ $('Get Week Index').first().json.col_1 }}54?valueInputOption=USER_ENTERED",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "googleSheetsOAuth2Api",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"range\": \"Marketing!{{ $('Get Week Index').first().json.col_1 }}52:{{ $('Get Week Index').first().json.col_1 }}54\",\n  \"majorDimension\": \"ROWS\",\n  \"values\": [\n    [\"{{ $('Set Fields (MDS)').item.json.mailchimp_open_rate }}\"],\n    [\"{{ $('Set Fields (MDS)').item.json.mailchimp_clickthrough_rate }}\"],\n    [\"{{ $('Set Fields (MDS)').item.json.mailchimp_unsubscribe_rate }}\"]\n  ]\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        5160,
+        420
+      ],
+      "id": "45c7f517-6ee8-4f54-b451-c972d986fa3f",
+      "name": "Update Google Sheets (MDS)5",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "ZAIM3zWlh1lB8bFJ",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "PUT",
+        "url": "=https://sheets.googleapis.com/v4/spreadsheets/1XouOsno7hsUHyvGDHjJmYcvShHlnLouBWbs0sQIG73g/values/Marketing!{{ $('Get Week Index').first().json.col_1 }}15:{{ $('Get Week Index').first().json.col_1 }}17?valueInputOption=USER_ENTERED",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "googleSheetsOAuth2Api",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"range\": \"Marketing!{{ $('Get Week Index').first().json.col_1 }}15:{{ $('Get Week Index').first().json.col_1 }}17\",\n  \"majorDimension\": \"ROWS\",\n  \"values\": [\n    [\"{{ $('Set Fields (TIF)').item.json.IG_net_growth }}\"],\n    [\"{{ $('Set Fields (TIF)').item.json.FB_views }}\"],\n    [\"{{ $('Set Fields (TIF)').item.json.IG_views }}\"]\n  ]\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        4560,
+        -100
+      ],
+      "id": "1d69de02-8fa1-4b89-88d3-f62cd4631c5d",
+      "name": "Update Google Sheets (TIF)2",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "ZAIM3zWlh1lB8bFJ",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "PUT",
+        "url": "=https://sheets.googleapis.com/v4/spreadsheets/1XouOsno7hsUHyvGDHjJmYcvShHlnLouBWbs0sQIG73g/values/Marketing!{{ $('Get Week Index').first().json.col_1 }}20?valueInputOption=USER_ENTERED",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "googleSheetsOAuth2Api",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"range\": \"Marketing!{{ $('Get Week Index').first().json.col_1 }}20\",\n  \"majorDimension\": \"ROWS\",\n  \"values\": [\n    [\"{{ $('Set Fields (TIF)').item.json['IG_content'] }}\"]\n  ]\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        4760,
+        -100
+      ],
+      "id": "ff3f6292-7507-46d1-8e33-306f164791c2",
+      "name": "Update Google Sheets (TIF)3",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "ZAIM3zWlh1lB8bFJ",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "PUT",
+        "url": "=https://sheets.googleapis.com/v4/spreadsheets/1XouOsno7hsUHyvGDHjJmYcvShHlnLouBWbs0sQIG73g/values/Marketing!{{ $('Get Week Index').first().json.col_1 }}22?valueInputOption=USER_ENTERED",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "googleSheetsOAuth2Api",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"range\": \"Marketing!{{ $('Get Week Index').first().json.col_1 }}22\",\n  \"majorDimension\": \"ROWS\",\n  \"values\": [\n    [\"{{ $('Set Fields (TIF)').item.json.mailchimp_subs }}\"]\n  ]\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        4960,
+        -100
+      ],
+      "id": "72f6cd4c-d6f9-46f9-88c8-ef6273054308",
+      "name": "Update Google Sheets (TIF)4",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "ZAIM3zWlh1lB8bFJ",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "PUT",
+        "url": "=https://sheets.googleapis.com/v4/spreadsheets/1XouOsno7hsUHyvGDHjJmYcvShHlnLouBWbs0sQIG73g/values/Marketing!{{ $('Get Week Index').first().json.col_1 }}27:{{ $('Get Week Index').first().json.col_1 }}28?valueInputOption=USER_ENTERED",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "googleSheetsOAuth2Api",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"range\": \"Marketing!{{ $('Get Week Index').first().json.col_1 }}27:{{ $('Get Week Index').first().json.col_1 }}28\",\n  \"majorDimension\": \"ROWS\",\n  \"values\": [\n    [\"{{ $('Set Fields (TIF)').item.json.mailchimp_open_rate }}\"],\n    [\"{{ $('Set Fields (TIF)').item.json.mailchimp_clickthrough_rate }}\"]\n  ]\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        5160,
+        -100
+      ],
+      "id": "875b22c9-bf4e-4a0f-8e39-b4b9a018b8ed",
+      "name": "Update Google Sheets (TIF)5",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "ZAIM3zWlh1lB8bFJ",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "PUT",
+        "url": "=https://sheets.googleapis.com/v4/spreadsheets/1XouOsno7hsUHyvGDHjJmYcvShHlnLouBWbs0sQIG73g/values/Marketing!{{ $('Get Week Index').first().json.col_1 }}30?valueInputOption=USER_ENTERED",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "googleSheetsOAuth2Api",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"range\": \"Marketing!{{ $('Get Week Index').first().json.col_1 }}30\",\n  \"majorDimension\": \"ROWS\",\n  \"values\": [\n    [\"{{ $('Set Fields (TIF)').item.json.mailchimp_unsubscribe_rate }}\"]\n  ]\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        5360,
+        -100
+      ],
+      "id": "f76e456c-5d8e-4e67-839e-f43a8eacbe73",
+      "name": "Update Google Sheets (TIF)6",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "ZAIM3zWlh1lB8bFJ",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "=https://sheets.googleapis.com/v4/spreadsheets/1XouOsno7hsUHyvGDHjJmYcvShHlnLouBWbs0sQIG73g/values/Marketing!{{ $('Increment Week Index').item.json.nextLetter }}1:{{ $('Increment Week Index').item.json.nextFourthLetter }}1",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "googleSheetsOAuth2Api",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        6480,
+        180
+      ],
+      "id": "5516d73b-cc35-47d6-8b8d-e8d76a46308c",
+      "name": "Check Index1",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "ZAIM3zWlh1lB8bFJ",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "=https://sheets.googleapis.com/v4/spreadsheets/1hksv6f2T51AV2GKQuXOZLagEwKDaF6QrprbZDvUqzd0/values/Sales!{{ $json.col_1 }}1:{{ $json.col_1 }}3",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "googleSheetsOAuth2Api",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        440,
+        180
+      ],
+      "id": "5f24d3ca-3131-409d-9cce-b86fd3388c68",
+      "name": "Check Index",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "ZAIM3zWlh1lB8bFJ",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "PUT",
+        "url": "=https://sheets.googleapis.com/v4/spreadsheets/1XouOsno7hsUHyvGDHjJmYcvShHlnLouBWbs0sQIG73g/values/Marketing!{{ $('Get Week Index').first().json.col_1 }}7?valueInputOption=RAW",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "googleSheetsOAuth2Api",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"range\": \"Marketing!{{ $('Get Week Index').first().json.col_1 }}7\",\n  \"majorDimension\": \"ROWS\",\n  \"values\": [\n    [\"{{ $('Set Fields (TIF)').item.json.YT_net_growth }}\"]\n  ]\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        5560,
+        -100
+      ],
+      "id": "905eb990-f0da-411d-bc89-07357e1bd834",
+      "name": "Update Google Sheets (TIF)7",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "ZAIM3zWlh1lB8bFJ",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "graphApiVersion": "v22.0",
+        "node": "={{ $('Set Fields').first().json.TIF_FB_ID }}",
+        "edge": "insights",
+        "options": {
+          "queryParameters": {
+            "parameter": [
+              {
+                "name": "metric",
+                "value": "page_video_views,page_impressions"
+              },
+              {
+                "name": "period",
+                "value": "day"
+              },
+              {
+                "name": "since",
+                "value": "={{ $('Set Fields').first().json.fromDate }}"
+              },
+              {
+                "name": "until",
+                "value": "={{ $('Set Fields').first().json.toDate }}"
+              },
+              {
+                "name": "access_token",
+                "value": "EAAeFlqhZB5iABOyzp5ywHlMp6H2miw1sxISYHHXuZAZClC9GEoezj67tkAMCiOZCPkF9GEZAFCelyDWkP8Vf3ERcw2dKH9PYMceuqUApwXLlas5B6IzO3XGTM0tDsE2ZA2ZAQhnBZApEPFTlrbZCnBxKipJHSETVmyBX94e9fj2ZC5241CeAD8aNuN0CFX9vs06YkJWXg7y9TJ"
+              }
+            ]
+          }
+        }
+      },
+      "type": "n8n-nodes-base.facebookGraphApi",
+      "typeVersion": 1,
+      "position": [
+        3560,
+        -100
+      ],
+      "id": "f27d05b6-e39b-4096-9d5f-337bc31fc279",
+      "name": "Get FB Views (TIF)",
+      "credentials": {
+        "facebookGraphApi": {
+          "id": "1zBekXr9fe2glsge",
+          "name": "Facebook Graph account (TIF & MDS)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "graphApiVersion": "v22.0",
+        "node": "={{ $('Set Fields').first().json.MDS_FB_ID }}",
+        "edge": "insights",
+        "options": {
+          "queryParameters": {
+            "parameter": [
+              {
+                "name": "metric",
+                "value": "page_video_views,page_impressions"
+              },
+              {
+                "name": "period",
+                "value": "day"
+              },
+              {
+                "name": "since",
+                "value": "={{ $('Set Fields').first().json.fromDate }}"
+              },
+              {
+                "name": "until",
+                "value": "={{ $('Set Fields').first().json.toDate }}"
+              },
+              {
+                "name": "access_token",
+                "value": "EAAeFlqhZB5iABO2CA6H0l2nbgpT5qZAlaKk1kwlIofYpYPscOlsawX0ExiNY8Rylkk7tR7bZA8A1TDsOuElVOsUS7hrfy6tJ5HZAENo5ZAnUHjI8RIZCTBECc36584ZCfNat5jdNKEZC3J9zZAir5S11u14CIlzoVdTZB5UaK8Da8KPjajlZB2SH2rHmrWj6P7jSYyYDAmz"
+              }
+            ]
+          }
+        }
+      },
+      "type": "n8n-nodes-base.facebookGraphApi",
+      "typeVersion": 1,
+      "position": [
+        3560,
+        420
+      ],
+      "id": "26a7d88b-84c6-4720-b77a-f2e43ab8bdb2",
+      "name": "Get FB Views (MDS)",
+      "credentials": {
+        "facebookGraphApi": {
+          "id": "1zBekXr9fe2glsge",
+          "name": "Facebook Graph account (TIF & MDS)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "let totalFBViews = 0;\nlet totalVideoViews = 0;\nlet totalPageImpressions = 0;\nconst item = $input.first()\n\nfor (let i=0; i<item.json.data[0].values.length; i++) {\n  if(item.json.data && item.json.data[0] && item.json.data[0].values && item.json.data[0].values[0]){\n    totalVideoViews += item.json.data[0].values[i].value\n  }\n}\n\nfor (let i=0; i<item.json.data[1].values.length; i++) {\n  if(item.json.data && item.json.data[1] && item.json.data[1].values && item.json.data[1].values[0]){\n    totalPageImpressions += item.json.data[1].values[i].value\n  }\n}\n\ntotalFBViews = totalVideoViews + totalPageImpressions\n\nreturn {totalFBViews};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        3760,
+        420
+      ],
+      "id": "24f078ad-b171-4e3a-bf8a-07ed21dc26c4",
+      "name": "Calculate Views (MDS)"
+    },
+    {
+      "parameters": {
+        "jsCode": "let totalFBViews = 0;\nlet totalVideoViews = 0;\nlet totalPageImpressions = 0;\nconst item = $input.first()\n\nfor (let i=0; i<item.json.data[0].values.length; i++) {\n  if(item.json.data && item.json.data[0] && item.json.data[0].values && item.json.data[0].values[0]){\n    totalVideoViews += item.json.data[0].values[i].value\n  }\n}\n\nfor (let i=0; i<item.json.data[1].values.length; i++) {\n  if(item.json.data && item.json.data[1] && item.json.data[1].values && item.json.data[1].values[0]){\n    totalPageImpressions += item.json.data[1].values[i].value\n  }\n}\n\ntotalFBViews = totalVideoViews + totalPageImpressions\n\nreturn {totalFBViews};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        3760,
+        -100
+      ],
+      "id": "76f5c171-9a97-4dd4-8e73-5b09fb9fc421",
+      "name": "Calculate Views (TIF)"
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "const item = $input.item.json;\nconst duration = item.contentDetails.duration;\nlet totalSeconds = 0;\n\n// Regular expressions to parse the ISO 8601 duration format\nconst hoursMatch = duration.match(/(\\d+)H/);\nconst minutesMatch = duration.match(/(\\d+)M/);\nconst secondsMatch = duration.match(/(\\d+)S/);\n\nif (hoursMatch) totalSeconds += parseInt(hoursMatch[1]) * 3600;\nif (minutesMatch) totalSeconds += parseInt(minutesMatch[1]) * 60;\nif (secondsMatch) totalSeconds += parseInt(secondsMatch[1]);\n\nitem.contentDetails.duration = totalSeconds.toString();\n\nreturn item;"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1640,
+        -340
+      ],
+      "id": "44b220db-e91a-4182-908c-8038d3123c43",
+      "name": "Code"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "items",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        1420,
+        -340
+      ],
+      "id": "b576767b-909a-4dd0-8377-21ad3e0c896f",
+      "name": "Split Out1"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "a7a1ab8d-db0d-4595-8b4c-b57e754e4844",
+              "leftValue": "={{ $json.contentDetails.duration.toNumber() }}",
+              "rightValue": 61,
+              "operator": {
+                "type": "number",
+                "operation": "gt"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1860,
+        -340
+      ],
+      "id": "1a2405bf-309f-4e20-9427-b75dfe3cea8d",
+      "name": "Filter Shorts"
+    },
+    {
+      "parameters": {
+        "jsCode": "let totalLongFormViews = 0;\nconst items = $input.all()\nfor (const item of items) {\n  // The view count is a string, so we need to parse it to a number\n  const viewCount = parseInt(item.json.statistics.viewCount, 10);\n  if (!isNaN(viewCount)) {\n    totalLongFormViews += viewCount;\n  }\n}\n\nreturn {totalLongFormViews};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2100,
+        -420
+      ],
+      "id": "5e1be22e-5f46-47e5-858c-1c5a1e5047c3",
+      "name": "Code1"
+    },
+    {
+      "parameters": {
+        "url": "=https://www.googleapis.com/youtube/v3/search",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "youTubeOAuth2Api",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "channelId",
+              "value": "={{ $('Set Fields').first().json.TIF_YT_ID }}"
+            },
+            {
+              "name": "type",
+              "value": "video"
+            },
+            {
+              "name": "part",
+              "value": "id"
+            },
+            {
+              "name": "publishedBefore",
+              "value": "={{ $('Set Fields').first().json.toDate.toDateTime() }}"
+            },
+            {
+              "name": "publishedAfter",
+              "value": "={{ $('Set Fields').first().json.fromDate.toDateTime() }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        960,
+        -340
+      ],
+      "id": "4dddd817-8296-459c-ae09-fd6868600cab",
+      "name": "Get YT Videos (TIF)",
+      "credentials": {
+        "youTubeOAuth2Api": {
+          "id": "VOgjVONkxCkSPZXh",
+          "name": "YouTube account (mydailyspanish)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "=https://www.googleapis.com/youtube/v3/videos",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "youTubeOAuth2Api",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "id",
+              "value": "={{ $json.items.map(item => item.id.videoId).join(',') }}"
+            },
+            {
+              "name": "part",
+              "value": "contentDetails,statistics"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1200,
+        -340
+      ],
+      "id": "6106cc1b-72c9-45ce-9404-17e07c0d5cf3",
+      "name": "Get YT Video Statistics (TIF)",
+      "credentials": {
+        "youTubeOAuth2Api": {
+          "id": "VOgjVONkxCkSPZXh",
+          "name": "YouTube account (mydailyspanish)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "=https://youtubeanalytics.googleapis.com/v2/reports\n?ids=channel=={{ $('Set Fields').first().json.TIF_YT_ID }}\n&startDate={{ $('Set Fields').first().json.fromDate.toDateTime().format('yyyy-MM-dd') }}\n&endDate={{ $('Set Fields').first().json.toDate.toDateTime().format('yyyy-MM-dd') }}\n&metrics=views\n&filters=creatorContentType==videoOnDemand",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "youTubeOAuth2Api",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1960,
+        -100
+      ],
+      "id": "68ebf781-ba8e-4d9d-b062-bc49f9805ad2",
+      "name": "Get YT Views (TIF)",
+      "credentials": {
+        "youTubeOAuth2Api": {
+          "id": "pkNcfWPuVIkDQGyZ",
+          "name": "YouTube account (talkinfrench)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "=https://youtubeanalytics.googleapis.com/v2/reports\n?ids=channel=={{ $('Set Fields').first().json.MDS_YT_ID }}\n&startDate={{ $('Set Fields').first().json.fromDate.toDateTime().format('yyyy-MM-dd') }}\n&endDate={{ $('Set Fields').first().json.toDate.toDateTime().format('yyyy-MM-dd') }}\n&metrics=subscribersGained,subscribersLost",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "youTubeOAuth2Api",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1760,
+        420
+      ],
+      "id": "b33ea9a8-6462-4ae7-936c-3575d4853b73",
+      "name": "Get New Subscribers (MDS)",
+      "credentials": {
+        "youTubeOAuth2Api": {
+          "id": "VOgjVONkxCkSPZXh",
+          "name": "YouTube account (mydailyspanish)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "=https://youtubeanalytics.googleapis.com/v2/reports\n?ids=channel=={{ $('Set Fields').first().json.TIF_YT_ID }}\n&startDate={{ $('Set Fields').first().json.fromDate.toDateTime().format('yyyy-MM-dd') }}\n&endDate={{ $('Set Fields').first().json.toDate.toDateTime().format('yyyy-MM-dd') }}\n&metrics=subscribersGained,subscribersLost",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "youTubeOAuth2Api",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1760,
+        -100
+      ],
+      "id": "0b5fe9d4-de98-4a09-a5c0-c1fe4e7524f6",
+      "name": "Get New Subscribers (TIF)",
+      "credentials": {
+        "youTubeOAuth2Api": {
+          "id": "pkNcfWPuVIkDQGyZ",
+          "name": "YouTube account (talkinfrench)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "let totalShortsViews = 0;\nconst items = $input.all()\nfor (const item of items) {\n  // The view count is a string, so we need to parse it to a number\n  const viewCount = parseInt(item.json.statistics.viewCount, 10);\n  if (!isNaN(viewCount)) {\n    totalShortsViews += viewCount;\n  }\n}\n\nreturn {totalShortsViews};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2100,
+        -260
+      ],
+      "id": "c6db86f3-8e67-44a9-8818-7a526c10776e",
+      "name": "Code2"
+    },
+    {
+      "parameters": {
+        "url": "=https://us6.api.mailchimp.com/3.0/lists/bac3844278/members",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "mailchimpApi",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "fields",
+              "value": "total_items"
+            },
+            {
+              "name": "count",
+              "value": "1"
+            },
+            {
+              "name": "before_timestamp_opt",
+              "value": "={{ $json.toDate }}"
+            },
+            {
+              "name": "since_timestamp_opt",
+              "value": "={{ $json.fromDate }}"
+            },
+            {
+              "name": "status",
+              "value": "subscribed"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        960,
+        -100
+      ],
+      "id": "b1d2bf95-e130-4eef-a87e-8f783aeb4456",
+      "name": "Get Lead Signups (TIF)",
+      "credentials": {
+        "mailchimpApi": {
+          "id": "NMF3urloNe2c0PC3",
+          "name": "Mailchimp account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "listGroup",
+        "list": "e648a0f2f6",
+        "groupCategory": "331a6b04aa"
+      },
+      "type": "n8n-nodes-base.mailchimp",
+      "typeVersion": 1,
+      "position": [
+        980,
+        180
+      ],
+      "id": "7022650b-b883-49eb-84db-76aa227cc870",
+      "name": "Mailchimp",
+      "credentials": {
+        "mailchimpApi": {
+          "id": "NMF3urloNe2c0PC3",
+          "name": "Mailchimp account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "=https://us6.api.mailchimp.com/3.0/lists/e648a0f2f6/members",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "mailchimpApi",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "before_timestamp_opt",
+              "value": "={{ $json.toDate }}"
+            },
+            {
+              "name": "count",
+              "value": "1"
+            },
+            {
+              "name": "fields",
+              "value": "total_items"
+            },
+            {
+              "name": "since_timestamp_opt",
+              "value": "={{ $json.fromDate }}"
+            },
+            {
+              "name": "status",
+              "value": "subscribed"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        960,
+        420
+      ],
+      "id": "0aa5b631-6913-43c5-b418-f5c82b1971f2",
+      "name": "Get Lead Signups (MDS)",
+      "credentials": {
+        "mailchimpApi": {
+          "id": "NMF3urloNe2c0PC3",
+          "name": "Mailchimp account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "graphApiVersion": "v22.0",
+        "node": "={{ $('Set Fields').first().json.TIF_IG_ID }}",
+        "edge": "insights",
+        "options": {
+          "queryParameters": {
+            "parameter": [
+              {
+                "name": "metric",
+                "value": "views"
+              },
+              {
+                "name": "period",
+                "value": "day"
+              },
+              {
+                "name": "since",
+                "value": "={{ $('Set Fields').first().json.fromDate }}"
+              },
+              {
+                "name": "until",
+                "value": "={{ $('Set Fields').first().json.toDate }}"
+              },
+              {
+                "name": "metric_type",
+                "value": "total_value"
+              }
+            ]
+          }
+        }
+      },
+      "type": "n8n-nodes-base.facebookGraphApi",
+      "typeVersion": 1,
+      "position": [
+        2960,
+        -100
+      ],
+      "id": "b825a55c-f8a2-4522-b1c9-0a20163db7f8",
+      "name": "Get IG Views (TIF)",
+      "credentials": {
+        "facebookGraphApi": {
+          "id": "1zBekXr9fe2glsge",
+          "name": "Facebook Graph account (TIF & MDS)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "graphApiVersion": "v22.0",
+        "node": "={{ $('Set Fields').first().json.MDS_IG_ID }}",
+        "edge": "insights",
+        "options": {
+          "queryParameters": {
+            "parameter": [
+              {
+                "name": "metric",
+                "value": "views"
+              },
+              {
+                "name": "period",
+                "value": "day"
+              },
+              {
+                "name": "since",
+                "value": "={{ $('Set Fields').first().json.fromDate }}"
+              },
+              {
+                "name": "until",
+                "value": "={{ $('Set Fields').first().json.toDate }}"
+              },
+              {
+                "name": "metric_type",
+                "value": "total_value"
+              }
+            ]
+          }
+        }
+      },
+      "type": "n8n-nodes-base.facebookGraphApi",
+      "typeVersion": 1,
+      "position": [
+        2960,
+        420
+      ],
+      "id": "e5c16e87-913d-4341-8bf1-2249cca2611b",
+      "name": "Get IG Views (MDS)",
+      "credentials": {
+        "facebookGraphApi": {
+          "id": "1zBekXr9fe2glsge",
+          "name": "Facebook Graph account (TIF & MDS)"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Get Week Index": {
+      "main": [
+        [
+          {
+            "node": "Check Index",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Week Index": {
+      "main": [
+        [
+          {
+            "node": "Check Index1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Increment Week Index": {
+      "main": [
+        [
+          {
+            "node": "Update Week Index",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger1": {
+      "main": [
+        [
+          {
+            "node": "Get Week Index",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Increment Index by 2": {
+      "main": [
+        [
+          {
+            "node": "Update Week Index1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "Increment Index by 2",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Increment Index by 4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Increment Index by 4": {
+      "main": [
+        [
+          {
+            "node": "Update Week Index2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Fields": {
+      "main": [
+        [
+          {
+            "node": "Get Lead Signups (MDS)",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Get Lead Signups (TIF)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "Increment Week Index",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Campaigns (TIF)": {
+      "main": [
+        [
+          {
+            "node": "Get Campaign Report (TIF)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Campaign Report (TIF)": {
+      "main": [
+        [
+          {
+            "node": "Calculate Rate Metrics (TIF)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Campaigns (MDS)": {
+      "main": [
+        [
+          {
+            "node": "Get Campaign Report (MDS)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Campaign Report (MDS)": {
+      "main": [
+        [
+          {
+            "node": "Calculate Rate Metrics (MDS)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Calculate Rate Metrics (TIF)": {
+      "main": [
+        [
+          {
+            "node": "Get New Subscribers (TIF)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Calculate Rate Metrics (MDS)": {
+      "main": [
+        [
+          {
+            "node": "Get New Subscribers (MDS)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get IG Content Uploaded (TIF)": {
+      "main": [
+        [
+          {
+            "node": "Get IG Views (TIF)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get FB Followers (TIF)": {
+      "main": [
+        [
+          {
+            "node": "Calculate FB Net Growth (TIF)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get YT Content Uploaded (TIF)": {
+      "main": [
+        [
+          {
+            "node": "Get IG Followers (TIF)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get IG Followers (TIF)": {
+      "main": [
+        [
+          {
+            "node": "Calculate IG Net Growth (TIF)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get YT Views (MDS)": {
+      "main": [
+        [
+          {
+            "node": "Get YT Content Uploaded (MDS)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get YT Content Uploaded (MDS)": {
+      "main": [
+        [
+          {
+            "node": "Get IG Followers (MDS)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get IG Content Uploaded (MDS)": {
+      "main": [
+        [
+          {
+            "node": "Get IG Views (MDS)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Calculate IG Net Growth (TIF)": {
+      "main": [
+        [
+          {
+            "node": "Get IG Content Uploaded (TIF)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Calculate FB Net Growth (TIF)": {
+      "main": [
+        [
+          {
+            "node": "Get FB Views (TIF)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get IG Followers (MDS)": {
+      "main": [
+        [
+          {
+            "node": "Calculate IG Net Growth (MDS)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Calculate IG Net Growth (MDS)": {
+      "main": [
+        [
+          {
+            "node": "Get IG Content Uploaded (MDS)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get FB Followers (MDS)": {
+      "main": [
+        [
+          {
+            "node": "Calculate FB Net Growth (MDS)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Calculate FB Net Growth (MDS)": {
+      "main": [
+        [
+          {
+            "node": "Get FB Views (MDS)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Google Sheets (TIF)": {
+      "main": [
+        [
+          {
+            "node": "Update Google Sheets (TIF)1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Google Sheets (TIF)1": {
+      "main": [
+        [
+          {
+            "node": "Update Google Sheets (TIF)2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Fields (TIF)": {
+      "main": [
+        [
+          {
+            "node": "Update Google Sheets (TIF)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Fields (MDS)": {
+      "main": [
+        [
+          {
+            "node": "Update Google Sheets (MDS)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Google Sheets (MDS)": {
+      "main": [
+        [
+          {
+            "node": "Update Google Sheets (MDS)1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Google Sheets (MDS)1": {
+      "main": [
+        [
+          {
+            "node": "Update Google Sheets (MDS)2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Google Sheets (MDS)2": {
+      "main": [
+        [
+          {
+            "node": "Update Google Sheets (MDS)3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Google Sheets (MDS)3": {
+      "main": [
+        [
+          {
+            "node": "Update Google Sheets (MDS)4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Google Sheets (MDS)4": {
+      "main": [
+        [
+          {
+            "node": "Update Google Sheets (MDS)5",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Google Sheets (MDS)5": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Update Google Sheets (TIF)2": {
+      "main": [
+        [
+          {
+            "node": "Update Google Sheets (TIF)3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Google Sheets (TIF)3": {
+      "main": [
+        [
+          {
+            "node": "Update Google Sheets (TIF)4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Google Sheets (TIF)4": {
+      "main": [
+        [
+          {
+            "node": "Update Google Sheets (TIF)5",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Google Sheets (TIF)5": {
+      "main": [
+        [
+          {
+            "node": "Update Google Sheets (TIF)6",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Google Sheets (TIF)6": {
+      "main": [
+        [
+          {
+            "node": "Update Google Sheets (TIF)7",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Index1": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Index": {
+      "main": [
+        [
+          {
+            "node": "Set Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Google Sheets (TIF)7": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get FB Views (TIF)": {
+      "main": [
+        [
+          {
+            "node": "Calculate Views (TIF)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get FB Views (MDS)": {
+      "main": [
+        [
+          {
+            "node": "Calculate Views (MDS)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Calculate Views (MDS)": {
+      "main": [
+        [
+          {
+            "node": "Set Fields (MDS)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Calculate Views (TIF)": {
+      "main": [
+        [
+          {
+            "node": "Set Fields (TIF)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out1": {
+      "main": [
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code": {
+      "main": [
+        [
+          {
+            "node": "Filter Shorts",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter Shorts": {
+      "main": [
+        [
+          {
+            "node": "Code1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Code2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get YT Videos (TIF)": {
+      "main": [
+        [
+          {
+            "node": "Get YT Video Statistics (TIF)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get YT Video Statistics (TIF)": {
+      "main": [
+        [
+          {
+            "node": "Split Out1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get YT Views (TIF)": {
+      "main": [
+        [
+          {
+            "node": "Get YT Content Uploaded (TIF)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get New Subscribers (MDS)": {
+      "main": [
+        [
+          {
+            "node": "Get YT Views (MDS)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get New Subscribers (TIF)": {
+      "main": [
+        [
+          {
+            "node": "Get YT Views (TIF)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Lead Signups (TIF)": {
+      "main": [
+        [
+          {
+            "node": "Get Campaigns (TIF)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Lead Signups (MDS)": {
+      "main": [
+        [
+          {
+            "node": "Get Campaigns (MDS)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get IG Views (TIF)": {
+      "main": [
+        [
+          {
+            "node": "Get FB Followers (TIF)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get IG Views (MDS)": {
+      "main": [
+        [
+          {
+            "node": "Get FB Followers (MDS)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "9dcb4ae2-be5c-4726-8e15-494d5ff6d4ed",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "c8b724acc8129c1844d5ce9f8594f1a7e81bb10432df4d031ad378df75270b25"
+  },
+  "id": "M70GYSSGCk2at8y9",
+  "tags": []
+}
